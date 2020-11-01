@@ -3,10 +3,8 @@
 
 import numpy as np
 
+from simplenn import NeuralNet, sgd_optimizer, tse_loss
 from simplenn.layers import Linear, Activation, tanh, tanh_prime
-from simplenn.nn import NeuralNet
-from simplenn.opti import sgd, tse
-from simplenn.train import train
 
 
 if __name__ == "__main__":
@@ -24,17 +22,17 @@ if __name__ == "__main__":
     ])
     # XOR can't be learned with a simple linear model. Comment out the
     # Tanh and second Linear layer to see for yourself.
-    net = NeuralNet([
+    net = NeuralNet(
         Linear(input_size=2, output_size=2),
         Activation(tanh, tanh_prime),
         Linear(input_size=2, output_size=2)
-    ])
-    train(
-        net, loss=tse, optimizer=sgd(),
+    )
+    net.train(
+        loss=tse_loss, optimizer=sgd_optimizer(),
         inputs=inputs, targets=targets,
         n_epochs=5000,
     )
     print("x, predicted, y")
     for x, y in zip(inputs, targets):
-        predicted = net.forward(x)
+        predicted = net.predict(x)
         print(x, predicted, y)

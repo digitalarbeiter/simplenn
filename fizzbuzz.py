@@ -3,10 +3,8 @@
 
 import numpy as np
 
+from simplenn import NeuralNet, sgd_optimizer, tse_loss
 from simplenn.layers import Linear, Activation, tanh, tanh_prime
-from simplenn.nn import NeuralNet
-from simplenn.opti import sgd, tse
-from simplenn.train import train
 
 
 def fizz_buzz_encode(x):
@@ -37,19 +35,19 @@ if __name__ == "__main__":
         fizz_buzz_encode(x)
         for x in range(101, 1024)
     ])
-    net = NeuralNet([
+    net = NeuralNet(
         Linear(input_size=10, output_size=50),
         Activation(tanh, tanh_prime),
         Linear(input_size=50, output_size=4)
-    ])
-    train(
-        net, loss=tse, optimizer=sgd(lr=0.001),
+    )
+    net.train(
+        loss=tse_loss, optimizer=sgd_optimizer(learning_rate=0.001),
         inputs=inputs, targets=targets,
         n_epochs=5000
     )
     print("here's what's wrong: x, predicted, actual:")
     for x in range(1, 101):
-        predicted = net.forward(binary_encode(x))
+        predicted = net.predict(binary_encode(x))
         predicted_idx = np.argmax(predicted)
         actual_idx = np.argmax(fizz_buzz_encode(x))
         labels = [str(x), "fizz", "buzz", "fizzbuzz"]
